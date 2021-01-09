@@ -2499,7 +2499,9 @@ static u32 Hal_readPGDataFromConfigFile(
 {
 	u32 i;
 	struct file *fp;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 	mm_segment_t fs;
+#endif
 	u8 temp[3];
 	loff_t pos = 0;
 	EEPROM_EFUSE_PRIV *pEEPROM = GET_EEPROM_EFUSE_PRIV(padapter);
@@ -2515,8 +2517,10 @@ static u32 Hal_readPGDataFromConfigFile(
 		return _FAIL;
 	}
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 	fs = get_fs();
 	set_fs(KERNEL_DS);
+#endif
 
 	DBG_871X("Efuse configure file:\n");
 	for (i=0; i<HWSET_MAX_SIZE_88E; i++) {
@@ -2526,7 +2530,9 @@ static u32 Hal_readPGDataFromConfigFile(
 		DBG_871X("%02X \n", PROMContent[i]);
 	}
 	DBG_871X("\n");
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 	set_fs(fs);
+#endif
 
 	filp_close(fp, NULL);
 	
@@ -2542,7 +2548,9 @@ Hal_ReadMACAddrFromFile_8188EU(
 {
 	u32 i;
 	struct file *fp;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 	mm_segment_t fs;
+#endif
 	u8 source_addr[18];
 	loff_t pos = 0;
 	u32 curtime = rtw_get_current_time();
@@ -2560,8 +2568,10 @@ Hal_ReadMACAddrFromFile_8188EU(
 		pEEPROM->bloadmac_fail_flag = _TRUE;
 		DBG_871X("Error, wifi mac address file doesn't exist.\n");
 	} else {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 		fs = get_fs();
 		set_fs(KERNEL_DS);
+#endif
 
 		DBG_871X("wifi mac address:\n");
 		vfs_read(fp, source_addr, 18, &pos);
@@ -2584,7 +2594,9 @@ Hal_ReadMACAddrFromFile_8188EU(
 			DBG_871X("%02x \n", pEEPROM->mac_addr[i]);
 		}
 		DBG_871X("\n");
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,10,0))
 		set_fs(fs);
+#endif
 		pEEPROM->bloadmac_fail_flag = _FALSE;
 		filp_close(fp, NULL);
 	}
